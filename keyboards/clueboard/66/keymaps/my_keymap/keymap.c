@@ -11,21 +11,35 @@
 #define _FL 3
 #define _CL 4
 
-// Declaring FN_CAPS to Momemtarily switch to _FL when held, and caps when tapped.
+// Defining FN_CAPS to Momemtarily switch to _FL when held, and caps when tapped.
 #define FN_CAPS LT(_FL, KC_CAPSLOCK)
-// Declaring FN_GUI to be LGUI when held, and caps when tapped.
+// Defining FN_GUI to be LGUI when held, and caps when tapped.
 #define FN_GUI LT(KC_LGUI, KC_CAPSLOCK)
+// Defining shorter dynamic macro keycodes
+#define D_R1 DYN_REC_START1
+#define D_R2 DYN_REC_START2
+#define D_P1 DYN_MACRO_PLAY1
+#define D_P2 DYN_MACRO_PLAY2
+#define D_SP DYN_REC_STOP
 
 // Declaring new keycode for auto-run
 enum my_keycodes {
-	RUND = SAFE_RANGE, // For down(shift + w)
-	RUNU			         // For up(shift + w)
+	RUND = SAFE_RANGE,   // For down(shift + w)
+	RUNU,			           // For up(shift + w)
+  DYNAMIC_MACRO_RANGE, // For Dynamic Macros
 };
+// For whatever reason I have to include the dynamic macro header here
+#include "dynamic_macro.h"
 
 // Define behavior for RUND and RUNU custom keycodes
 // Could also use process_record_kb()?  Not sure of the difference
 bool process_record_user(uint16_t keycode, keyrecord_t *record)
 {
+  // Apparently I also need this for Dynamic Macros
+  if (!process_record_dynamic_macro(keycode, record))
+  {
+    return false;
+  }
 	switch(keycode) {
 		case RUND:
       if(record->event.pressed)
@@ -81,9 +95,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
 [_FL] = KEYMAP(
   KC_GRV, KC_F1,  KC_F2,  KC_F3,  KC_F4,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9,  KC_F10, KC_F11, KC_F12, _______,KC_DEL,         KC_VOLU, \
-  _______,_______,_______,_______,_______,_______,_______,_______,_______,KC_MPRV,KC_MPLY,KC_MNXT,_______,KC_MUTE,                KC_VOLD, \
-  _______,_______,MO(_CL),_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,                         \
-  _______,_______,_______,_______,_______,_______,_______,_______,TO(_BL),TO(_GL),TO(_WL),_______,_______,_______,        KC_PGUP,         \
+  _______, D_R1,   D_R2,   D_SP,  _______,_______,_______,_______,_______,KC_MPRV,KC_MPLY,KC_MNXT,_______,KC_MUTE,                KC_VOLD, \
+  _______, D_P1,   D_P2,  _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,                         \
+  _______,_______,_______,_______,MO(_CL),_______,_______,_______,TO(_BL),TO(_GL),TO(_WL),_______,_______,_______,        KC_PGUP,         \
   _______,_______,_______,_______,        _______,_______,                        _______,_______,MO(_FL),_______,KC_HOME,KC_PGDN,KC_END),
 
   /* Keymap _CL: Control layer
@@ -91,8 +105,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_CL] = KEYMAP(
   BL_STEP,RGB_M_P,RGB_M_B,RGB_M_R,RGB_M_SW,RGB_M_SN,RGB_M_K,RGB_M_X,RGB_M_G,_______,_______,_______,_______,_______,RGB_TOG,        RGB_VAI, \
   _______,_______,_______,_______,RESET,  _______,_______,_______,_______,_______,_______,_______,_______,_______,                RGB_VAD, \
-  _______,_______,MO(_CL),_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,                         \
-  MO(_FL),_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,        RGB_SAI,         \
+  _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,                         \
+  MO(_FL),_______,_______,_______,MO(_CL),_______,_______,_______,_______,_______,_______,_______,_______,_______,        RGB_SAI,         \
   _______,_______,_______,_______,        RGB_MOD,   RGB_MOD,                     _______,_______,MO(_FL),_______,RGB_HUD,RGB_SAD,RGB_HUI),
 
 };
