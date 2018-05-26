@@ -58,12 +58,12 @@ typedef union {
     uint16_t hue     :9;
     uint8_t  sat     :8;
     uint8_t  val     :8;
+    uint8_t  speed   :8;//EECONFIG needs to be increased to support this
   };
 } rgb_config_t;
 
 enum rgb_matrix_effects {
 	RGB_MATRIX_SOLID_COLOR = 1,
-    RGB_MATRIX_SOLID_REACTIVE,
     RGB_MATRIX_ALPHAS_MODS,
     RGB_MATRIX_DUAL_BEACON,
     RGB_MATRIX_GRADIENT_UP_DOWN,
@@ -76,6 +76,7 @@ enum rgb_matrix_effects {
     RGB_MATRIX_RAINBOW_MOVING_CHEVRON,
     RGB_MATRIX_JELLYBEAN_RAINDROPS,
 #ifdef RGB_MATRIX_KEYPRESSES
+    RGB_MATRIX_SOLID_REACTIVE,
     RGB_MATRIX_SPLASH,
     RGB_MATRIX_MULTISPLASH,
     RGB_MATRIX_SOLID_SPLASH,
@@ -129,6 +130,8 @@ void rgblight_increase_sat(void);
 void rgblight_decrease_sat(void);
 void rgblight_increase_val(void);
 void rgblight_decrease_val(void);
+void rgblight_increase_speed(void);
+void rgblight_decrease_speed(void);
 void rgblight_mode(uint8_t mode);
 uint32_t rgblight_get_mode(void);
 
