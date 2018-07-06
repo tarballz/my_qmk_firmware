@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo make m10a:my_keymap:dfu
+sudo make m10a:mykeymap:dfu
