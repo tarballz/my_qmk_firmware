@@ -9,6 +9,9 @@ extern keymap_config_t keymap_config;
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
 
+#define TAPPING_TERM 200
+uint16_t lt12_timer;
+
 enum layers
 {
     _LAYER0,
@@ -33,6 +36,7 @@ enum custom_keycodes
   KC_AF9,                // Alt + F9        (Continue to cursor)
   KC_SSRB,               //Shft+Spr+]       (Go to right tab)
   KC_SSLB,               //Shft+spr+[       (Go to left tab)
+  KC_APPL,               // Tap layer thing
   /* ----- XCode keycodes ----- */
   KC_SB,                 // Super + B        (Build)
   KC_SR,                 // Super + R        (Run)
@@ -188,6 +192,20 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       }
       return false;
 
+    case KC_APPL: 
+      if (record->event.pressed)
+      {
+        lt12_timer = timer_read();
+        layer_on(_LAYER5);
+      }
+      else
+      {
+        layer_off(_LAYER5);
+        if (timer_elapsed(lt12_timer) < TAPPING_TERM)
+          layer_on(_LAYER4);
+      }
+      return true;
+
     /* ----- XCode keycodes ----- */
     /* Build */
     case KC_SB:
@@ -332,7 +350,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Appcode L1 */
     [_LAYER0] = LAYOUT(
       KC_F8,   KC_F7,  KC_SHF8,    
-      KC_CTLD, KC_SF2, MO(_LAYER5)),
+      KC_CTLD, KC_SF2, KC_APPL),
     /* Xcode */
     [_LAYER1] = LAYOUT(
       KC_F6, KC_F7, KC_F8,
