@@ -34,9 +34,10 @@ enum custom_keycodes
   KC_AF10,               // Alt   + F10     (Go to execution point)
   KC_ASR,                // Alt + Super + R (Continue)
   KC_AF9,                // Alt + F9        (Continue to cursor)
-  KC_SSRB,               //Shft+Spr+]       (Go to right tab)
-  KC_SSLB,               //Shft+spr+[       (Go to left tab)
-  KC_APPL,               // Tap layer thing
+  KC_SSRB,               // Shft+Spr+]      (Go to right tab)
+  KC_SSLB,               // Shft+spr+[      (Go to left tab)
+  KC_APP2,               // AppcodeLayer2
+  KC_APP1,               // AppcodeLayer1
   /* ----- XCode keycodes ----- */
   KC_SB,                 // Super + B        (Build)
   KC_SR,                 // Super + R        (Run)
@@ -194,7 +195,7 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
 
     /* Only go to layer 5 (layer switch layer) if the button is held,
      * if tapped, goto layer 4 */
-    case KC_APPL: 
+    case KC_APP2: 
       if (record->event.pressed)
       {
         lt12_timer = timer_read();
@@ -205,6 +206,20 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
         layer_off(_LAYER5);
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
           layer_on(_LAYER4);
+      }
+      return true;
+
+    case KC_APP1:
+      if (record->event.pressed)
+      {
+        lt12_timer = timer_read();
+        layer_on(_LAYER5);
+      }
+      else
+      {
+        layer_off(_LAYER5);
+        if (timer_elapsed(lt12_timer) < TAPPING_TERM)
+          layer_on(_LAYER0);
       }
       return true;
 
@@ -352,7 +367,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Appcode L1 */
     [_LAYER0] = LAYOUT(
       KC_F8,   KC_F7,  KC_SHF8,    
-      KC_CTLD, KC_SF2, KC_APPL),
+      KC_CTLD, KC_SF2, KC_APP2),
     /* Xcode */
     [_LAYER1] = LAYOUT(
       KC_F6, KC_F7, KC_F8,
@@ -368,12 +383,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     },
     /* Appcode L2 */
     [_LAYER4] = LAYOUT(
-      KC_SSLB, KC_SSRB, TO(_LAYER0),
+      KC_SSLB, KC_SSRB, KC_SF8,
       KC_ASR,  KC_AF10, _______),
     /* Layer-switch layer */
     [_LAYER5] = LAYOUT(
       TO(_LAYER0), TO(_LAYER1), TO(_LAYER2),
-      TO(_LAYER4), XXXXXXX,     _______)
+      TO(_LAYER4), XXXXXXX,     MO(_LAYER5))
 };
 
 void matrix_init_user(void)
