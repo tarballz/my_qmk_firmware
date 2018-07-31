@@ -384,7 +384,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Appcode L2 */
     [_LAYER4] = LAYOUT(
       KC_SSLB, KC_SSRB, KC_SF8,
-      KC_ASR,  KC_AF10, _______),
+      KC_ASR,  KC_AF10, KC_APP1),
     /* Layer-switch layer */
     [_LAYER5] = LAYOUT(
       TO(_LAYER0), TO(_LAYER1), TO(_LAYER2),
