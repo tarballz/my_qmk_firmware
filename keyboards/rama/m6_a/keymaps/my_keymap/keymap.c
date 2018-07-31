@@ -192,6 +192,8 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       }
       return false;
 
+    /* Only go to layer 5 (layer switch layer) if the button is held,
+     * if tapped, goto layer 4 */
     case KC_APPL: 
       if (record->event.pressed)
       {
@@ -354,7 +356,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Xcode */
     [_LAYER1] = LAYOUT(
       KC_F6, KC_F7, KC_F8,
-      KC_SB, KC_SR, _______),
+      KC_SB, KC_SR, MO(_LAYER5)),
     /* VSCode L1*/
     [_LAYER2] = LAYOUT(
       KC_SAL, KC_SAR, TO(_LAYER3),
@@ -368,6 +370,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_LAYER4] = LAYOUT(
       KC_SSLB, KC_SSRB, TO(_LAYER0),
       KC_ASR,  KC_AF10, _______),
+    /* Layer-switch layer */
     [_LAYER5] = LAYOUT(
       TO(_LAYER0), TO(_LAYER1), TO(_LAYER2),
       TO(_LAYER4), XXXXXXX,     _______)
