@@ -14,12 +14,12 @@ uint16_t lt12_timer;
 
 enum layers
 {
-    _LAYER0,
-    _LAYER1,
-    _LAYER2,
-    _LAYER3,
-    _LAYER4,
-    _LAYER5
+  _LAYER0 = 0,
+  _LAYER1,
+  _LAYER2,
+  _LAYER3,
+  _LAYER4,
+  _LAYER5
 };
 
 enum custom_keycodes
@@ -34,10 +34,10 @@ enum custom_keycodes
   KC_AF10,               // Alt   + F10     (Go to execution point)
   KC_ASR,                // Alt + Super + R (Continue)
   KC_AF9,                // Alt + F9        (Continue to cursor)
-  KC_SSRB,               // Shft+Spr+]      (Go to right tab)
-  KC_SSLB,               // Shft+spr+[      (Go to left tab)
-  KC_APP2,               // AppcodeLayer2
-  KC_APP1,               // AppcodeLayer1
+  KC_SSRB,               //Shft+Spr+]       (Go to right tab)
+  KC_SSLB,               //Shft+spr+[       (Go to left tab)
+  KC_APPA,               // Tap layer thing
+  KC_APPB,
   /* ----- XCode keycodes ----- */
   KC_SB,                 // Super + B        (Build)
   KC_SR,                 // Super + R        (Run)
@@ -194,8 +194,8 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       return false;
 
     /* Only go to layer 5 (layer switch layer) if the button is held,
-     * if tapped, goto layer 4 */
-    case KC_APP2: 
+     * if tapped, goto layer 1 */
+    case KC_APPA: 
       if (record->event.pressed)
       {
         lt12_timer = timer_read();
@@ -205,11 +205,23 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       {
         layer_off(_LAYER5);
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
-          layer_on(_LAYER4);
+        {
+          layer_on(_LAYER1);
+          if (IS_LAYER_ON(_LAYER4))
+            layer_off(_LAYER4);
+          if (IS_LAYER_ON(_LAYER3))
+            layer_off(_LAYER3);
+          if (IS_LAYER_ON(_LAYER2))
+            layer_off(_LAYER2);
+          if (IS_LAYER_ON(_LAYER0))
+            layer_off(_LAYER0);
+        }
       }
       return true;
 
-    case KC_APP1:
+    /* Only go to layer 5 (layer switch layer) if the button is held,
+     * if tapped, goto layer 0 */
+    case KC_APPB: 
       if (record->event.pressed)
       {
         lt12_timer = timer_read();
@@ -219,7 +231,17 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       {
         layer_off(_LAYER5);
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
+        {
           layer_on(_LAYER0);
+          if (IS_LAYER_ON(_LAYER4))
+            layer_off(_LAYER4);
+          if (IS_LAYER_ON(_LAYER3))
+            layer_off(_LAYER3);
+          if (IS_LAYER_ON(_LAYER2))
+            layer_off(_LAYER2);
+          if (IS_LAYER_ON(_LAYER1))
+            layer_off(_LAYER1);
+        }
       }
       return true;
 
@@ -367,28 +389,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Appcode L1 */
     [_LAYER0] = LAYOUT(
       KC_F8,   KC_F7,  KC_SHF8,    
-      KC_CTLD, KC_SF2, KC_APP2),
-    /* Xcode */
+      KC_CTLD, KC_SF2, KC_APPA),
+    /* Appcode L2 */
     [_LAYER1] = LAYOUT(
-      KC_F6, KC_F7, KC_F8,
-      KC_SB, KC_SR, MO(_LAYER5)),
+      KC_SSLB, KC_SSRB, KC_SF8,
+      KC_ASR,  KC_AF10, KC_APPB),
     /* VSCode L1*/
     [_LAYER2] = LAYOUT(
       KC_SAL, KC_SAR, TO(_LAYER3),
-      KC_GOB, KC_GOF, _______),
+      KC_GOB, KC_GOF, MO(_LAYER5)),
     /* VSCode L2 */
     [_LAYER3] = {
       { KC_AF12, XXXXXXX, TO(_LAYER2),
         XXXXXXX, XXXXXXX, _______     }
     },
-    /* Appcode L2 */
+    /* Xcode */
     [_LAYER4] = LAYOUT(
-      KC_SSLB, KC_SSRB, KC_SF8,
-      KC_ASR,  KC_AF10, KC_APP1),
+      KC_F6, KC_F7, KC_F8,
+      KC_SB, KC_SR, _______),
     /* Layer-switch layer */
     [_LAYER5] = LAYOUT(
       TO(_LAYER0), TO(_LAYER1), TO(_LAYER2),
-      TO(_LAYER4), XXXXXXX,     MO(_LAYER5))
+      TO(_LAYER4), XXXXXXX,     _______)
 };
 
 void matrix_init_user(void)
