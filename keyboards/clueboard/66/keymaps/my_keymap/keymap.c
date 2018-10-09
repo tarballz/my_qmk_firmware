@@ -5,14 +5,25 @@
 
 // Each layer gets a name for readability, which is then used in the keymap matrix below.
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
-#define _BL 0
+/* #define _BL 0
 #define _GL 1
 #define _WL 2
 #define _FL 3
-#define _CL 4
+#define _CL 4 */
+enum layers
+{
+  _BL = 0,
+  _GL,
+  _WL,
+  _FL,
+  _CL
+};
 
-// Defining FN_CAPS to Momemtarily switch to _FL when held, and caps when tapped.
+// Defining FN_CAPS to momentarily switch to _FL when held, and caps when tapped.
 #define FN_CAPS LT(_FL, KC_CAPSLOCK)
+// Defining FN_SPACE to momentarily switch to _FL when held, and space when tapped.
+#define FN_SPC LT(_FL, KC_SPC)
+
 // Defining shorter dynamic macro keycodes
 #define D_R1 DYN_REC_START1
 #define D_R2 DYN_REC_START2
@@ -87,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB, KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,   KC_O,   KC_P,   KC_LBRC,KC_RBRC,KC_BSLS,                KC_PGDN, \
   FN_CAPS,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NUHS,KC_ENT,                          \
   KC_LSPO,KC_NUBS,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,  KC_COMM, KC_DOT, KC_SLSH,KC_RO,  KC_RSPC,        KC_UP,           \
-  KC_LCTL,KC_LGUI,KC_LALT,KC_MHEN,        KC_SPC, KC_SPC,                         KC_HENK,KC_RGUI,MO(_FL),KC_RCTL,KC_LEFT,KC_DOWN,KC_RGHT),
+  KC_LCTL,KC_LGUI,KC_LALT,KC_MHEN,        FN_SPC, FN_SPC,                         KC_HENK,KC_RGUI,MO(_FL),KC_RCTL,KC_LEFT,KC_DOWN,KC_RGHT),
 
   /* Keymap _FL: Function Layer
    */
