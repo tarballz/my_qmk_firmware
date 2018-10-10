@@ -19,7 +19,9 @@ enum layers
   _LAYER2,
   _LAYER3,
   _LAYER4,
-  _LAYER5
+  _LAYER5,
+  _LAYER6,
+  _LAYER6EX
 };
 
 enum custom_keycodes
@@ -207,6 +209,10 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
         {
           layer_on(_LAYER1);
+          if (IS_LAYER_ON(_LAYER6))
+            layer_off(_LAYER6);
+          if (IS_LAYER_ON(_LAYER6EX))
+          layer_off(_LAYER6EX);
           if (IS_LAYER_ON(_LAYER4))
             layer_off(_LAYER4);
           if (IS_LAYER_ON(_LAYER3))
@@ -233,6 +239,10 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
         {
           layer_on(_LAYER0);
+          if (IS_LAYER_ON(_LAYER6))
+            layer_off(_LAYER6);
+          if (IS_LAYER_ON(_LAYER6EX))
+            layer_off(_LAYER6EX);
           if (IS_LAYER_ON(_LAYER4))
             layer_off(_LAYER4);
           if (IS_LAYER_ON(_LAYER3))
@@ -384,6 +394,9 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
 
 #define _______ KC_TRNS
 #define XXXXXXX KC_NO
+// Defining FN_PGDWN to momentarily switch to _LAYER6EX when held, and pgdown
+// when tapped
+#define FN_PGDWN1 LT(_LAYER6EX, KC_PGDOWN)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Appcode L1 */
@@ -409,8 +422,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_SB, KC_SR, _______),
     /* Layer-switch layer */
     [_LAYER5] = LAYOUT(
-      TO(_LAYER0), TO(_LAYER1), TO(_LAYER2),
-      TO(_LAYER4), XXXXXXX,     _______)
+      TO(_LAYER0), TO(_LAYER1), TO(_LAYER4),
+      TO(_LAYER2), TO(_LAYER6), _______),
+    /* Arrow and pgup/down layer */
+    [_LAYER6] = LAYOUT(
+      KC_PGUP, KC_UP, FN_PGDWN1,
+      KC_LEFT, KC_DOWN, KC_RIGHT),
+    /* Secondary layer-switch layer for arrows */
+    [_LAYER6EX] = LAYOUT(
+      TO(_LAYER0), TO(_LAYER1), MO(_LAYER6EX),
+      TO(_LAYER2), TO(_LAYER6), XXXXXXX),
+
 };
 
 void matrix_init_user(void)
