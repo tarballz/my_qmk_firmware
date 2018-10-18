@@ -10,7 +10,6 @@ extern keymap_config_t keymap_config;
 // entirely and just use numbers.
 
 #define TAPPING_TERM 200
-uint16_t lt12_timer;
 
 enum layers
 {
@@ -75,8 +74,9 @@ void activate_layer_disable_others (int exceptLayer)
 /* Now define behavior for these custom keycodes */
 bool process_record_user (uint16_t keycode, keyrecord_t *record)
 {
-  switch (keycode) {
+  static uint16_t lt12_timer;
 
+  switch (keycode) {
     // Docker build
     case KC_DBLD:
       if (record->event.pressed)
@@ -219,6 +219,7 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       {
         lt12_timer = timer_read();
         layer_on(_LAYER6);
+        //layer_state = 1UL<<_LAYER6;
       }
       else
       {
@@ -238,12 +239,14 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
           if (IS_LAYER_ON(_LAYER0))
             layer_off(_LAYER0);
 #else
-          //default_layer_set(1U<<_LAYER1);
-          layer_move(_LAYER1);
+          default_layer_set(1U<<_LAYER1);
+          layer_clear();
+          //layer_move(_LAYER1);
+          //layer_state_set (1UL<<_LAYER1);
 #endif
         }
       }
-      return true;
+      return false;
 
     /* Only go to layer 5 (layer switch layer) if the button is held,
      * if tapped, goto layer 0 */
