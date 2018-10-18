@@ -77,37 +77,6 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
   static uint16_t lt12_timer;
 
   switch (keycode) {
-    // Docker build
-    case KC_DBLD:
-      if (record->event.pressed)
-      {
-        /* Launch an eOS terminal */
-        SEND_STRING (SS_LGUI ("t"));
-
-        /* Add a slight delay to make sure screen is caught up */
-        _delay_ms (500);
-
-        /* Run docker_go.sh */
-        SEND_STRING ("cd /home/cool/Mantis && ./docker_go.sh" SS_TAP (X_ENTER));
-        SEND_STRING ("r00t005" SS_TAP (X_ENTER));
-      }
-      return false;
-
-    // Docker kill
-    case KC_DKLL:
-      if (record->event.pressed)
-      {
-        /* Launch an eOS terminal */
-        SEND_STRING (SS_LGUI ("t"));
-
-        /* Add a slight delay to make sure screen is caught up */
-        _delay_ms (500);
-
-        /* Run docker_stopall.sh */
-        SEND_STRING ("cd /home/cool/Mantis && ./docker_stopall.sh" SS_TAP (X_ENTER));
-        SEND_STRING ("FAKENEWS" SS_TAP (X_ENTER));
-      }
-      return false;
 
     /* ----- AppCode keycodes ----- */
     /* Step out */
