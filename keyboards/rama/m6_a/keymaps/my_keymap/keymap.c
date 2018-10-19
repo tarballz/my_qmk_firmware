@@ -10,7 +10,6 @@ extern keymap_config_t keymap_config;
 // entirely and just use numbers.
 
 #define TAPPING_TERM 200
-uint16_t lt12_timer;
 
 enum layers
 {
@@ -19,7 +18,8 @@ enum layers
   _LAYER2,
   _LAYER3,
   _LAYER4,
-  _LAYER5
+  _LAYER5,
+  _LAYER6
 };
 
 enum custom_keycodes
@@ -53,42 +53,30 @@ enum custom_keycodes
   KC_AF12,               // Alt + F12        (Peek Definition)
 };
 
+/* --------------------------------------------------------------- */
+#if 0
+void activate_layer_disable_others (int exceptLayer)
+{
+  int index;
+
+  layer_on (exceptLayer);
+
+  for (index = _LAYER6; index >= _LAYER0; --index)
+  {
+    if ( (index != exceptLayer) && (IS_LAYER_ON (index)) )
+      layer_off (index);
+  }
+}
+#endif
+
+/* --------------------------------------------------------------- */
+
 /* Now define behavior for these custom keycodes */
 bool process_record_user (uint16_t keycode, keyrecord_t *record)
 {
+  static uint16_t lt12_timer;
+
   switch (keycode) {
-
-    // Docker build
-    case KC_DBLD:
-      if (record->event.pressed)
-      {
-        /* Launch an eOS terminal */
-        SEND_STRING (SS_LGUI ("t"));
-
-        /* Add a slight delay to make sure screen is caught up */
-        _delay_ms (500);
-
-        /* Run docker_go.sh */
-        SEND_STRING ("cd /home/cool/Mantis && ./docker_go.sh" SS_TAP (X_ENTER));
-        SEND_STRING ("r00t005" SS_TAP (X_ENTER));
-      }
-      return false;
-
-    // Docker kill
-    case KC_DKLL:
-      if (record->event.pressed)
-      {
-        /* Launch an eOS terminal */
-        SEND_STRING (SS_LGUI ("t"));
-
-        /* Add a slight delay to make sure screen is caught up */
-        _delay_ms (500);
-
-        /* Run docker_stopall.sh */
-        SEND_STRING ("cd /home/cool/Mantis && ./docker_stopall.sh" SS_TAP (X_ENTER));
-        SEND_STRING ("r00t005" SS_TAP (X_ENTER));
-      }
-      return false;
 
     /* ----- AppCode keycodes ----- */
     /* Step out */
@@ -193,20 +181,24 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       }
       return false;
 
-    /* Only go to layer 5 (layer switch layer) if the button is held,
+    /* Only go to layer 6 (layer switch layer) if the button is held,
      * if tapped, goto layer 1 */
     case KC_APPA: 
       if (record->event.pressed)
       {
         lt12_timer = timer_read();
-        layer_on(_LAYER5);
+        layer_on(_LAYER6);
+        //layer_state = 1UL<<_LAYER6;
       }
       else
       {
-        layer_off(_LAYER5);
+        layer_off(_LAYER6);
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
         {
+#if 0
           layer_on(_LAYER1);
+          if (IS_LAYER_ON(_LAYER6))
+            layer_off(_LAYER6);
           if (IS_LAYER_ON(_LAYER4))
             layer_off(_LAYER4);
           if (IS_LAYER_ON(_LAYER3))
@@ -215,9 +207,15 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
             layer_off(_LAYER2);
           if (IS_LAYER_ON(_LAYER0))
             layer_off(_LAYER0);
+#else
+          default_layer_set(1U<<_LAYER1);
+          layer_clear();
+          //layer_move(_LAYER1);
+          //layer_state_set (1UL<<_LAYER1);
+#endif
         }
       }
-      return true;
+      return false;
 
     /* Only go to layer 5 (layer switch layer) if the button is held,
      * if tapped, goto layer 0 */
@@ -225,14 +223,16 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
       if (record->event.pressed)
       {
         lt12_timer = timer_read();
-        layer_on(_LAYER5);
+        layer_on(_LAYER6);
       }
       else
       {
-        layer_off(_LAYER5);
+        layer_off(_LAYER6);
         if (timer_elapsed(lt12_timer) < TAPPING_TERM)
         {
           layer_on(_LAYER0);
+          if (IS_LAYER_ON(_LAYER6))
+            layer_off(_LAYER6);
           if (IS_LAYER_ON(_LAYER4))
             layer_off(_LAYER4);
           if (IS_LAYER_ON(_LAYER3))
@@ -382,8 +382,13 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
   return true;
 }
 
+/* --------------------------------------------------------------- */
+
 #define _______ KC_TRNS
 #define XXXXXXX KC_NO
+// Defining FN_RT to momentarily switch to _LAYER5EX when held, and right arrow
+// when tapped
+#define FN_RT LT(_LAYER6, KC_RIGHT)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Appcode L1 */
@@ -397,7 +402,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* VSCode L1*/
     [_LAYER2] = LAYOUT(
       KC_SAL, KC_SAR, TO(_LAYER3),
-      KC_GOB, KC_GOF, MO(_LAYER5)),
+      KC_GOB, KC_GOF, MO(_LAYER6)),
     /* VSCode L2 */
     [_LAYER3] = {
       { KC_AF12, XXXXXXX, TO(_LAYER2),
@@ -407,10 +412,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_LAYER4] = LAYOUT(
       KC_F6, KC_F7, KC_F8,
       KC_SB, KC_SR, _______),
-    /* Layer-switch layer */
+    /* Arrow and pgup/down layer */
     [_LAYER5] = LAYOUT(
-      TO(_LAYER0), TO(_LAYER1), TO(_LAYER2),
-      TO(_LAYER4), XXXXXXX,     _______)
+      KC_PGUP, KC_UP,  KC_PGDOWN,
+      KC_LEFT, KC_DOWN, FN_RT),
+    /* Layer-switch layer */
+    [_LAYER6] = LAYOUT(
+      TO(_LAYER0), TO(_LAYER1), TO(_LAYER4),
+      TO(_LAYER2), TO(_LAYER5), MO(_LAYER6)),
+#if 0
+    /* Secondary layer-switch layer for arrows */
+    [_LAYER5EX] = LAYOUT(
+      TO(_LAYER0), TO(_LAYER1), XXXXXXX,
+      TO(_LAYER2), TO(_LAYER5), MO(_LAYER5EX))
+#endif
+
 };
 
 void matrix_init_user(void)
