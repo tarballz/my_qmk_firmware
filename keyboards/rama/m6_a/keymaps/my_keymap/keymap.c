@@ -11,6 +11,9 @@ extern keymap_config_t keymap_config;
 
 #define TAPPING_TERM 200
 
+// So I can switch between mac and linux layouts.
+#define LINUX 1
+
 enum layers
 {
   _LAYER0 = 0,
@@ -94,7 +97,14 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
     case KC_CTLD:
       if (record->event.pressed)
       {
-        SEND_STRING (SS_LCTRL ("d"));
+        #if LINUX == 1
+          register_code (KC_LSFT);
+          register_code (KC_F9);
+          unregister_code (KC_LSFT);
+          unregister_code (KC_F9);
+        #else
+          SEND_STRING (SS_LCTRL ("d"));
+        #endif
       }
       return false;
 
@@ -102,10 +112,17 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
     case KC_SF2:
       if (record->event.pressed)
       {
-        register_code (KC_LWIN);
-        register_code (KC_F2);
-        unregister_code (KC_LWIN);
-        unregister_code (KC_F2);
+        #if LINUX == 1
+          register_code (KC_LCTL);
+          register_code (KC_F2);
+          unregister_code (KC_LCTL);
+          unregister_code (KC_F2);
+        #else
+          register_code (KC_LWIN);
+          register_code (KC_F2);
+          unregister_code (KC_LWIN);
+          unregister_code (KC_F2);
+        #endif
       }
       return false;
 
@@ -210,6 +227,7 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
 #else
           default_layer_set(1U<<_LAYER1);
           layer_clear();
+          // DF(_LAYER1); // Same as layer_move?
           //layer_move(_LAYER1);
           //layer_state_set (1UL<<_LAYER1);
 #endif
@@ -391,14 +409,21 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
 #define FN_RT LT(_LAYER6, KC_RIGHT)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    /* Appcode L1 */
+    /* Jetbrains L1 */
     [_LAYER0] = LAYOUT(
       KC_F8,   KC_F7,  KC_SHF8,    
       KC_CTLD, KC_SF2, KC_APPA),
-    /* Appcode L2 */
+#if 0
+    /* Jetbrains L2 */
     [_LAYER1] = LAYOUT(
       KC_SSLB, KC_SSRB, KC_SF8,
       KC_ASR,  KC_AF10, KC_APPB),
+#else
+    /* Eclipse layer */
+    [_LAYER1] = LAYOUT(
+      KC_F6,   KC_F5,   KC_F7,
+      KC_F11, RCTL(KC_F2), MO(_LAYER6)),
+#endif
     /* VSCode L1*/
     [_LAYER2] = LAYOUT(
       KC_SAL, KC_SAR, TO(_LAYER3),
