@@ -74,7 +74,6 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
 
         /* Run docker_go.sh */
         SEND_STRING ("cd /home/cool/Mantis && ./docker_go.sh" SS_TAP (X_ENTER));
-        SEND_STRING ("r00t005" SS_TAP (X_ENTER));
       }
       return false;
 
@@ -90,7 +89,6 @@ bool process_record_user (uint16_t keycode, keyrecord_t *record)
 
         /* Run docker_stopall.sh */
         SEND_STRING ("cd /home/cool/Mantis && ./docker_stopall.sh" SS_TAP (X_ENTER));
-        SEND_STRING ("r00t005" SS_TAP (X_ENTER));
       }
       return false;
 

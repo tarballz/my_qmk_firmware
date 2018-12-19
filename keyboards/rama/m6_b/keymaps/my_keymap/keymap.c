@@ -1,8 +1,24 @@
 #include QMK_KEYBOARD_H
-#include "action_layer.h"
-#include "eeconfig.h"
+//#include "action_layer.h"
+//#include "eeconfig.h"
+//#include "rgblight.h"
 
-extern keymap_config_t keymap_config;
+//extern keymap_config_t keymap_config;
+
+/**
+ * RGB Modes
+ * 1 = Static
+ * 2-5 = Breathing
+ * 6-8 = Rainbow
+ * 9-14 = Swirl
+ * 15-20 = Snake
+ * 21-24 = NightRider
+ * 25    = Christmas
+ * 26-30 = Static Gradient
+ */
+//const uint8_t RGBLED_RAINBOW_SWIRL_INTERVALS[] PROGMEM = {100, 50, 10}; // Set the last one to 10ms for some speedy swirls
+//static uint32_t rgbMode = 6;
+
 
 // Each layer gets a name for readability, which is then used in the keymap matrix below.
 // The underscores don't mean anything - you can have a layer called STUFF or any other name.
@@ -454,9 +470,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
+#if 0
+/* QMK initialization */
 void matrix_init_user(void)
 {
+#if 0
 #ifdef BACKLIGHT_ENABLE
     backlight_level(0);
 #endif
+#endif
+  //rgblight_mode (rgbMode);
 }
+
+/* Runs code every time that the layers get changed */
+uint32_t layer_state_set_user (uint32_t state)
+{
+  switch (biton32 (state))
+  {
+    case _LAYER1:
+      break;
+
+    default: // For any other layer, or default layer
+      break;
+  }
+
+  return state;
+}
+#endif
