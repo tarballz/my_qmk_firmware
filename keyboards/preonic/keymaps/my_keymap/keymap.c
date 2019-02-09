@@ -61,10 +61,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,  \
   KC_LCTL,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, LSFT_T(KC_ENT),  \
-  KC_GESC, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT  \
+  KC_LEAD, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT  \
 ),
 
-/* Lower 
+/* Lower
  * ,-----------------------------------------------------------------------------------.
  * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -244,7 +244,26 @@ void dip_update(uint8_t index, bool active) {
    }
 }
 
+LEADER_EXTERNS();
 void matrix_scan_user(void) {
+
+  /* Leader key stuff! */
+  LEADER_DICTIONARY()
+  {
+    leading = false;
+    leader_end();
+
+    // LEAD + s + t + s
+    SEQ_THREE_KEYS(KC_S, KC_T, KC_S)
+    {
+      SEND_STRING("if (OK != status)");
+      wait_ms(200);
+      SEND_STRING(SS_TAP(X_ENTER)"  goto exit;");
+      wait_ms(200);
+      SEND_STRING(SS_TAP(X_ENTER)SS_DOWN(X_LSHIFT)SS_TAP(X_TAB)SS_UP(X_LSHIFT));
+    }
+  }
+
   #ifdef AUDIO_ENABLE
     if (muse_mode) {
       if (muse_counter == 0) {
