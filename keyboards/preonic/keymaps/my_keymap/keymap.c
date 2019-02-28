@@ -35,6 +35,7 @@ enum preonic_keycodes {
   BACKLIT
 };
 
+#define CMT_SHFT 3
 #define XXXXXXX KC_NO
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
@@ -78,10 +79,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_preonic_grid( \
-  KC_GRV,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,   KC_F8,    KC_F9,    KC_F10,  KC_BSPC, \
-  KC_CAPS, KC_F11,   KC_F12,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, KC_DEL,  \
-  KC_LCTL, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_LEFT,  KC_DOWN, KC_UP,    KC_RGHT,  XXXXXXX, XXXXXXX, \
-  _______, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  KC_PGUP,  KC_PGDN, _______, \
+  KC_GRV,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,   KC_F8,    KC_F9,    KC_F10,  KC_DEL,  \
+  KC_CAPS, KC_F11,   KC_F12,   XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX, KC_BSPC, \
+  KC_LCTL, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  KC_LEFT,  KC_DOWN, KC_UP,    KC_RGHT,  XXXXXXX, KC_PIPE, \
+  _______, XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX,  XXXXXXX, XXXXXXX,  KC_PGDN,  KC_PGUP, _______, \
   _______, _______,  _______,  _______,  _______,  _______,  _______,  _______, KC_MNXT,  KC_VOLD,  KC_VOLU, KC_MPLY  \
 ),
 
@@ -99,11 +100,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_preonic_grid( \
-  KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC, \
-  KC_GRV,  KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LBRC, KC_RBRC, KC_DEL,  \
+  KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL,  \
+  KC_GRV,  KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LBRC, KC_RBRC, KC_BSPC, \
   KC_LCTL, KC_MINS, KC_EQL,  KC_SLSH, KC_LCBR, KC_LBRC, KC_RBRC, KC_RCBR, KC_BSLS, KC_MINS, KC_EQL,  KC_PIPE, \
   KC_LPRN, KC_UNDS, KC_PLUS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX ,XXXXXXX ,XXXXXXX ,KC_UNDS, KC_PLUS, KC_RPRN, \
-  _______, _______, _______, _______, _______, _______, _______, _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END\
+  _______, _______, _______, _______, _______, _______, _______, _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END   \
 ),
 
 /* Adjust (Lower + Raise)
@@ -246,6 +247,7 @@ void dip_update(uint8_t index, bool active) {
 
 LEADER_EXTERNS();
 void matrix_scan_user(void) {
+  unsigned char count;
 
   /* Leader key stuff! */
   LEADER_DICTIONARY()
@@ -260,7 +262,20 @@ void matrix_scan_user(void) {
       wait_ms(200);
       SEND_STRING(SS_TAP(X_ENTER)"  goto exit;");
       wait_ms(200);
-      SEND_STRING(SS_TAP(X_ENTER)SS_DOWN(X_LSHIFT)SS_TAP(X_TAB)SS_UP(X_LSHIFT));
+      //SEND_STRING(SS_TAP(X_ENTER)SS_DOWN(X_LSHIFT)SS_TAP(X_TAB)SS_UP(X_LSHIFT));
+      SEND_STRING(SS_TAP(X_ENTER));
+    }
+
+    SEQ_ONE_KEY(KC_8)
+    {
+      SEND_STRING("/*  */");
+      count = 0;
+      while(count < CMT_SHFT)
+      {
+        register_code(KC_LEFT);
+        unregister_code(KC_LEFT);
+        count++;
+      }
     }
   }
 
