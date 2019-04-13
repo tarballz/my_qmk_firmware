@@ -1,4 +1,5 @@
-#include "66.h"
+/*#include "66.h"*/
+#include QMK_KEYBOARD_H
 
 // Helpful defines
 #define _______ KC_TRNS

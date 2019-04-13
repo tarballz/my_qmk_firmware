@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo make clueboard/66:my_keymap:dfu
+sudo make clueboard/66/rev3:my_keymap:dfu
