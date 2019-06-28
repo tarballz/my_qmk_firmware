@@ -1,5 +1,5 @@
 #!/bin/bash
 
 sudo sleep 3
-sudo make preonic/rev3:my_keymap:dfu-util
+sudo CFLAGS="-Wno-error=deprecated" make preonic/rev3:my_keymap:dfu-util
 
