@@ -37,3 +37,5 @@ ENCODER_ENABLE = yes
 
 LAYOUTS = ortho_4x12 planck_mit
 LAYOUTS_HAS_RGB = no
+
+LEADER_ENABLE = yes
