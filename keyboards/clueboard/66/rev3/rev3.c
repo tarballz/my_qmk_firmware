@@ -1,6 +1,8 @@
 #include "rev3.h"
 #include <avr/io.h>
+#ifdef BACKLIGHT_ENABLE
 #include "backlight.h"
+#endif
 #include "print.h"
 
 void matrix_init_kb(void) {
@@ -15,6 +17,7 @@ void matrix_scan_kb(void) {
     matrix_scan_user();
 }
 
+#ifdef BACKLIGHT_ENABLE
 void backlight_init_ports(void) {
     print("init_backlight_pin()\n");
     // Set our LED pins as output
@@ -57,3 +60,4 @@ void led_set_kb(uint8_t usb_led) {
         PORTB &= ~(1<<4);
     }
 }
+#endif
